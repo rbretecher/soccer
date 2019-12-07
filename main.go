@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"sort"
 	"text/template"
@@ -27,7 +28,7 @@ func main() {
 		s, err := getStanding(c)
 
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		ranking = append(ranking, formatStanding(s)...)
@@ -42,7 +43,7 @@ func main() {
 	tmpl, err := template.ParseFiles("web/layout.html")
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	file, err := os.Create("build/index.html")
@@ -51,7 +52,7 @@ func main() {
 	err = tmpl.Execute(file, struct{ Ranking []team }{ranking})
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	println("Site built with success")
