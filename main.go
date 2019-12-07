@@ -43,15 +43,24 @@ func main() {
 	tmpl, err := template.ParseFiles("web/layout.html")
 
 	if err != nil {
+		println("Could not parse layout.html")
 		log.Fatal(err)
 	}
+
+	println("Parsed layout.html with success")
 
 	file, err := os.Create("build/index.html")
 	defer file.Close()
 
+	if err != nil {
+		println("Could not create build/index.html")
+		log.Fatal(err)
+	}
+
 	err = tmpl.Execute(file, struct{ Ranking []team }{ranking})
 
 	if err != nil {
+		println("Could not populate build/index.html")
 		log.Fatal(err)
 	}
 
