@@ -49,6 +49,13 @@ func main() {
 
 	println("Parsed layout.html with success")
 
+	err = os.Mkdir("build", 0700)
+
+	if err != nil {
+		println("Could not create build folder")
+		log.Fatal(err)
+	}
+
 	file, err := os.Create("build/index.html")
 	defer file.Close()
 
