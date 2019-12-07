@@ -1,0 +1,78 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"sort"
+	"text/template"
+)
+
+func main() {
+
+	competitions := []int{
+		2014, // Liga
+		2015, // Ligue 1
+		2002, // Bundesliga
+		2019, // Serie A
+		2021, // Premier League
+	}
+
+	var ranking []team
+
+	for _, c := range competitions {
+
+		println(fmt.Sprintf("Getting competition : %d", c))
+
+		s, err := getStanding(c)
+
+		if err != nil {
+			panic(err)
+		}
+
+		ranking = append(ranking, formatStanding(s)...)
+
+		//time.Sleep(5 * time.Second)
+	}
+
+	sort.Slice(ranking, func(i, j int) bool {
+		return ranking[i].AveragePoints > ranking[j].AveragePoints
+	})
+
+	tmpl, err := template.ParseFiles("web/layout.html")
+
+	if err != nil {
+		panic(err)
+	}
+
+	file, err := os.Create("build/index.html")
+	defer file.Close()
+
+	err = tmpl.Execute(file, struct{ Ranking []team }{ranking})
+
+	if err != nil {
+		panic(err)
+	}
+
+	println("Site built with success")
+}
+
+func formatStanding(s *standing) (teams []team) {
+	for _, row := range s.Standings[0].Table {
+		teams = append(teams, team{
+			Name:          row.Team.Name,
+			Points:        row.Points,
+			AveragePoints: float32(row.Points) / float32(row.PlayedGames),
+		})
+	}
+
+	return
+}
+
+func getStanding(competitionID int) (s *standing, err error) {
+	b := request(fmt.Sprintf("https://api.football-data.org/v2/competitions/%d/standings?standingType=TOTAL", competitionID))
+
+	err = json.Unmarshal(b, &s)
+
+	return
+}
