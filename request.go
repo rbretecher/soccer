@@ -14,6 +14,9 @@ func request(url string) []byte {
 		log.Fatal(err)
 	}
 
+	println("DEBUG TOKEN")
+	println(os.Getenv("TOKEN"))
+
 	req.Header.Set("X-Auth-Token", os.Getenv("TOKEN"))
 
 	resp, err := http.DefaultClient.Do(req)
