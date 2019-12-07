@@ -11,5 +11,5 @@ script:
 
 deploy:
     provider: netlify
-    local_dir: 'build/'
+    dir: 'build/'
     edge: true
