@@ -1,19 +1,21 @@
 <html>
     <head>
-        <title>Best teams</title>
+        <title>Soccer stats</title>
     </head>
     <body>
-        <h1>Best teams</h1>
+        <h1>Best teams (sort by average points per match)</h1>
         <table>
             <thead>
                 <th>Team</th>
                 <th>Avg points</th>
+                <th>Total points</th>
             </thead>
             <tbody>
                 {{range .Ranking}}
                 <tr>
                     <td>{{.Name}}</td>
                     <td>{{.AveragePoints}}</td>
+                    <td>{{.Points}}</td>
                 </tr>
                 {{end}}
             </tbody>

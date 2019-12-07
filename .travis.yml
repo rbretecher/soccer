@@ -13,3 +13,4 @@ deploy:
     provider: netlify
     dir: 'build/'
     edge: true
+    prod: true
