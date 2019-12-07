@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -82,14 +81,6 @@ func formatStanding(s *standing) (teams []team) {
 			AveragePoints: float32(row.Points) / float32(row.PlayedGames),
 		})
 	}
-
-	return
-}
-
-func getStanding(competitionID int) (s *standing, err error) {
-	b := request(fmt.Sprintf("https://api.football-data.org/v2/competitions/%d/standings?standingType=TOTAL", competitionID))
-
-	err = json.Unmarshal(b, &s)
 
 	return
 }

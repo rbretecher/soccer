@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,9 +15,6 @@ func request(url string) []byte {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	println("DEBUG TOKEN")
-	println(os.Getenv("TOKEN"))
 
 	req.Header.Set("X-Auth-Token", os.Getenv("TOKEN"))
 
@@ -33,4 +32,12 @@ func request(url string) []byte {
 	}
 
 	return body
+}
+
+func getStanding(competitionID int) (s *standing, err error) {
+	b := request(fmt.Sprintf("https://api.football-data.org/v2/competitions/%d/standings?standingType=TOTAL", competitionID))
+
+	err = json.Unmarshal(b, &s)
+
+	return
 }
