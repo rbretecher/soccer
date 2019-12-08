@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"text/template"
+	"time"
 )
 
 func main() {
@@ -46,6 +47,10 @@ func main() {
 		return ranking[i].AveragePoints > ranking[j].AveragePoints
 	})
 
+	for index, team := range ranking {
+		team.Position = index + 1
+	}
+
 	tmpl, err := template.ParseFiles("web/layout.html")
 
 	if err != nil {
@@ -72,7 +77,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = tmpl.Execute(file, struct{ Ranking []*team }{ranking})
+	err = tmpl.Execute(file, struct {
+		GenerationDate string
+		Ranking        []*team
+	}{time.Now().UTC().String(), ranking})
 
 	if err != nil {
 		println("Could not populate build/index.html")
