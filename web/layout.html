@@ -9,29 +9,31 @@
         />
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <h1>Soccer leaderboard</h1>
             <span>Generation date : {{ .GenerationDate }}</span>
-            <table class="table">
-                <thead>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>Games played</th>
-                    <th>Total points</th>
-                    <th>Avg points</th>
-                </thead>
-                <tbody>
-                    {{range .Ranking}}
-                    <tr>
-                        <td>{{.Position}}</td>
-                        <td>{{.Name}}</td>
-                        <td>{{.PlayedGames}}</td>
-                        <td>{{.Points}}</td>
-                        <td>{{.AveragePoints}}</td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>#</th>
+                        <th>Team</th>
+                        <th>Games played</th>
+                        <th>Total points</th>
+                        <th>Avg points</th>
+                    </thead>
+                    <tbody>
+                        {{range .Ranking}}
+                        <tr>
+                            <td>{{.Position}}</td>
+                            <td>{{.Name}}</td>
+                            <td>{{.PlayedGames}}</td>
+                            <td>{{.Points}}</td>
+                            <td>{{.AveragePoints}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </body>
 </html>
