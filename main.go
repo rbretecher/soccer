@@ -11,6 +11,7 @@ import (
 func main() {
 
 	competitions := []int{
+		2001, // UEFA Champions League
 		2014, // Liga
 		2015, // Ligue 1
 		2002, // Bundesliga
@@ -18,7 +19,7 @@ func main() {
 		2021, // Premier League
 	}
 
-	var ranking []team
+	mRanking := map[int]*team{}
 
 	for _, c := range competitions {
 
@@ -30,9 +31,15 @@ func main() {
 			log.Fatal(err)
 		}
 
-		ranking = append(ranking, formatStanding(s)...)
+		addToRanking(mRanking, s)
 
-		//time.Sleep(5 * time.Second)
+		// Token only allows 10 requests/min
+		//time.Sleep(2 * time.Second)
+	}
+
+	ranking := make([]*team, 0)
+	for _, team := range mRanking {
+		ranking = append(ranking, team)
 	}
 
 	sort.Slice(ranking, func(i, j int) bool {
@@ -48,11 +55,13 @@ func main() {
 
 	println("Parsed layout.html with success")
 
-	err = os.Mkdir("build", 0700)
+	if _, err := os.Stat("build"); os.IsNotExist(err) {
+		err = os.Mkdir("build", 0700)
 
-	if err != nil {
-		println("Could not create build folder")
-		log.Fatal(err)
+		if err != nil {
+			println("Could not create build folder")
+			log.Fatal(err)
+		}
 	}
 
 	file, err := os.Create("build/index.html")
@@ -63,7 +72,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = tmpl.Execute(file, struct{ Ranking []team }{ranking})
+	err = tmpl.Execute(file, struct{ Ranking []*team }{ranking})
 
 	if err != nil {
 		println("Could not populate build/index.html")
@@ -73,14 +82,21 @@ func main() {
 	println("Site built with success")
 }
 
-func formatStanding(s *standing) (teams []team) {
-	for _, row := range s.Standings[0].Table {
-		teams = append(teams, team{
-			Name:          row.Team.Name,
-			Points:        row.Points,
-			AveragePoints: float32(row.Points) / float32(row.PlayedGames),
-		})
+func addToRanking(ranking map[int]*team, s *standing) {
+	for _, currentStanding := range s.Standings {
+		for _, row := range currentStanding.Table {
+			if _, ok := ranking[row.Team.ID]; ok {
+				ranking[row.Team.ID].Points += row.Points
+				ranking[row.Team.ID].PlayedGames += row.PlayedGames
+				ranking[row.Team.ID].AveragePoints = float32(ranking[row.Team.ID].Points) / float32(ranking[row.Team.ID].PlayedGames)
+			} else {
+				ranking[row.Team.ID] = &team{
+					Name:          row.Team.Name,
+					Points:        row.Points,
+					PlayedGames:   row.PlayedGames,
+					AveragePoints: float32(row.Points) / float32(row.PlayedGames),
+				}
+			}
+		}
 	}
-
-	return
 }

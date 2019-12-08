@@ -48,6 +48,7 @@ type standing struct {
 
 type team struct {
 	Name          string
+	PlayedGames   int
 	Points        int
 	AveragePoints float32
 }
